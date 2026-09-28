@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초등 5학년 수학 - 규칙과 대응 탐구대</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        },
+                        mathYellow: '#fef08a',
+                        mathGreen: '#4ade80',
+                        mathPurple: '#c084fc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            user-select: none;
+            background-color: #f8fafc;
+        }
+        .bounce-short {
+            animation: bounce 0.6s ease infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+        .pulse-soft {
+            animation: pulseSoft 2s infinite;
+        }
+        @keyframes pulseSoft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <header class="bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm shadow-inner">
+                    <i class="fa-solid fa-shapes text-yellow-300 text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold bg-yellow-300 text-slate-900 px-2 py-0.5 rounded-full uppercase tracking-wide">초등 5학년 1학기 3단원</span>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight">규칙과 대응 탐구대 ✨</h1>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 bg-black/20 p-1.5 rounded-xl text-sm font-semibold">
+                <div class="flex items-center px-3 py-1 bg-white/20 rounded-lg">
+                    <i class="fa-solid fa-star text-yellow-300 mr-1.5"></i>
+                    <span>별점: <strong id="globalScore">0</strong>점</span>
+                </div>
+                <div class="flex items-center px-3 py-1 bg-white/20 rounded-lg">
+                    <i class="fa-solid fa-trophy text-amber-300 mr-1.5"></i>
+                    <span>뱃지: <strong id="badgeCount">0</strong>/4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-white/10 backdrop-blur-md border-t border-white/10 px-4">
+            <div class="max-w-6xl mx-auto flex space-x-1 md:space-x-4 overflow-x-auto py-2 no-scrollbar">
+                <button onclick="switchTab('concept')" id="tab-concept" class="nav-btn active-tab flex items-center px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 bg-white text-indigo-700 shadow-md">
+                    <i class="fa-solid fa-book-open mr-2"></i>1. 개념 배우기
+                </button>
+                <button onclick="switchTab('explore')" id="tab-explore" class="nav-btn flex items-center px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 text-white hover:bg-white/20">
+                    <i class="fa-solid fa-puzzle-piece mr-2"></i>2. 실습 탐구소
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-btn flex items-center px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 text-white hover:bg-white/20">
+                    <i class="fa-solid fa-gamepad mr-2"></i>3. 퀴즈 도전
+                </button>
+                <button onclick="switchTab('sandbox')" id="tab-sandbox" class="nav-btn flex items-center px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 text-white hover:bg-white/20">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>4. 나만의 규칙 상자
+                </button>
+                <button onclick="switchTab('report')" id="tab-report" class="nav-btn flex items-center px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 text-white hover:bg-white/20">
+                    <i class="fa-solid fa-medal mr-2"></i>5. 나의 성장 일지
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+        <section id="sec-concept" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white shadow-xl">
+                <div class="max-w-3xl">
+                    <span class="bg-white/20 text-yellow-200 text-xs font-bold px-3 py-1 rounded-full uppercase">핵심 개념 요약</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-2 mb-3">'대응 관계'란 무엇일까요? 🤔</h2>
+                    <p class="text-blue-100 text-base leading-relaxed">
+                        한 양이 변함에 따라 **다른 양이 일정하게 변하는 관계**를 <span class="text-yellow-300 font-bold underline underline-offset-4">대응 관계</span>라고 해요!<br>
+                        일상생활에서 두 양 사이에 어떤 규칙이 숨어있는지 찾아내고, **기호(□, △, ○)**를 사용해 간단한 식으로 나타낼 수 있어요.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Visual Concept Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">1. 두 양 사이의 관계 찾기</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        자동차 1대에는 바퀴가 4개 있습니다. 자동차가 2대면 바퀴는 8개, 3대면 12개가 됩니다.
+                    </p>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs font-semibold text-amber-900">
+                        💡 바퀴 수 = 자동차 수 × 4
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">2. 기호(□, △, ○)로 나타내기</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        복잡한 글 대신 자동차 수를 <span class="font-bold text-indigo-600">□</span>, 바퀴 수를 <span class="font-bold text-indigo-600">△</span>라 하면 기호로 나타낼 수 있어요.
+                    </p>
+                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs font-semibold text-emerald-900 text-center">
+                        <span class="text-lg font-bold text-indigo-700">△ = □ × 4</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">3. 미래의 값 예측하기</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        대응 관계식을 알면 자동차가 100대일 때 바퀴가 총 400개라는 것을 일일이 세지 않고도 쉽게 구해요!
+                    </p>
+                    <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs font-semibold text-purple-900">
+                        🚀 100 × 4 = 400개!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept Demonstration Interactive Table -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-table-cells text-indigo-600 mr-2.5"></i>
+                    대표적인 대응 관계 유형 모아보기
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-700">
+                        <thead class="bg-slate-100 text-slate-800 uppercase font-bold text-xs rounded-xl">
+                            <tr>
+                                <th class="p-3.5 rounded-l-xl">상황 예시</th>
+                                <th class="p-3.5">첫 번째 양 (□)</th>
+                                <th class="p-3.5">두 번째 양 (△)</th>
+                                <th class="p-3.5">말로 표현한 대응 관계</th>
+                                <th class="p-3.5 rounded-r-xl">대응 관계식</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">🚗 자동차와 바퀴</td>
+                                <td class="p-3.5">자동차 수 (□)</td>
+                                <td class="p-3.5">바퀴 수 (△)</td>
+                                <td class="p-3.5">바퀴 수는 자동차 수의 4배입니다.</td>
+                                <td class="p-3.5 font-bold text-indigo-600">△ = □ × 4</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">🎂 형과 동생의 나이</td>
+                                <td class="p-3.5">동생 나이 (□)</td>
+                                <td class="p-3.5">형 나이 (△)</td>
+                                <td class="p-3.5">형 나이는 동생 나이보다 3살 많습니다.</td>
+                                <td class="p-3.5 font-bold text-indigo-600">△ = □ + 3</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">🔺 정삼각형과 변의 개수</td>
+                                <td class="p-3.5">정삼각형 수 (□)</td>
+                                <td class="p-3.5">변의 개수 (△)</td>
+                                <td class="p-3.5">변의 개수는 정삼각형 수의 3배입니다.</td>
+                                <td class="p-3.5 font-bold text-indigo-600">△ = □ × 3</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">✂️ 리본 자르기</td>
+                                <td class="p-3.5">자른 횟수 (□)</td>
+                                <td class="p-3.5">조각 수 (△)</td>
+                                <td class="p-3.5">조각 수는 자른 횟수보다 1만큼 더 큽니다.</td>
+                                <td class="p-3.5 font-bold text-indigo-600">△ = □ + 1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-explore" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">직접 조작해보는 인터랙티브 탐구</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1">대응 관계 물체 실험실 🧪</h2>
+                    </div>
+                    <!-- Topic selector -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setExploreTopic('car')" id="exp-topic-car" class="exp-topic-btn bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm">
+                            🚗 자동차 & 바퀴
+                        </button>
+                        <button onclick="setExploreTopic('triangle')" id="exp-topic-triangle" class="exp-topic-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold px-4 py-2 rounded-xl text-sm transition">
+                            🔺 정삼각형 & 성냥
+                        </button>
+                        <button onclick="setExploreTopic('age')" id="exp-topic-age" class="exp-topic-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold px-4 py-2 rounded-xl text-sm transition">
+                            🎂 형과 동생 나이
+                        </button>
+                        <button onclick="setExploreTopic('chair')" id="exp-topic-chair" class="exp-topic-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold px-4 py-2 rounded-xl text-sm transition">
+                            🪑 탁자와 의자
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Visual Stage -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-6 text-white flex flex-col justify-between min-h-[320px] shadow-inner relative overflow-hidden">
+                        <div class="flex justify-between items-center z-10 mb-4">
+                            <span class="text-xs bg-white/20 text-white px-2.5 py-1 rounded-lg font-mono" id="simTitle">자동차 수에 따른 바퀴 수 관찰</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-slate-300">개수 조절:</span>
+                                <button onclick="changeSimCount(-1)" class="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center font-bold text-lg">-</button>
+                                <span id="simCountDisplay" class="text-lg font-extrabold text-yellow-400 w-8 text-center">3</span>
+                                <button onclick="changeSimCount(1)" class="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center font-bold text-lg">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Visual Container -->
+                        <div id="simVisualBox" class="flex-grow flex flex-wrap items-center justify-center gap-4 py-6 z-10 overflow-y-auto max-h-[260px]">
+                            <!-- Dynamic SVG / Icons populated by JS -->
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl z-10 flex items-center justify-between text-xs md:text-sm">
+                            <span id="simSummaryText" class="text-slate-200">자동차 3대일 때 바퀴는 12개입니다.</span>
+                            <span class="font-bold text-yellow-300" id="simRuleTag">규칙: × 4</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Data Table & Formula Checker -->
+                    <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center">
+                                <i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> 대응 관계표
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-center text-xs">
+                                    <thead class="bg-indigo-100 text-indigo-900 font-bold">
+                                        <tr>
+                                            <th class="p-2 rounded-l-lg" id="tableHeader1">자동차 수 (□)</th>
+                                            <th class="p-2">1</th>
+                                            <th class="p-2">2</th>
+                                            <th class="p-2">3</th>
+                                            <th class="p-2">4</th>
+                                            <th class="p-2 rounded-r-lg">5</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBodyRow" class="divide-y divide-slate-200 text-slate-800 font-extrabold">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Formula Expression Builder -->
+                        <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200 space-y-3">
+                            <h4 class="font-bold text-indigo-950 text-sm flex items-center">
+                                <i class="fa-solid fa-pen-ruler text-indigo-600 mr-2"></i> 대응 관계식 완성하기
+                            </h4>
+                            <p class="text-xs text-indigo-800" id="formulaInstruction">
+                                자동차 수(□)와 바퀴 수(△) 사이의 대응 관계식을 완성해보세요!
+                            </p>
+
+                            <div class="flex items-center justify-center space-x-2 bg-white p-3 rounded-xl shadow-inner border border-indigo-100 text-lg font-black">
+                                <span id="formulaLeft" class="text-purple-600">△</span>
+                                <span>=</span>
+                                <span id="formulaRight1" class="text-blue-600">□</span>
+                                <select id="formulaOp" onchange="checkUserFormula()" class="bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                    <option value="×" selected>×</option>
+                                    <option value="÷">÷</option>
+                                </select>
+                                <input type="number" id="formulaNum" oninput="checkUserFormula()" value="4" class="w-14 bg-slate-100 border border-slate-300 rounded-lg text-center py-1 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+
+                            <div id="formulaFeedback" class="text-xs font-bold text-center py-1.5 rounded-lg bg-emerald-100 text-emerald-800">
+                                ✨ 정답입니다! 바퀴 수(△) = 자동차 수(□) × 4
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-quiz" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200">
+                <!-- Quiz Progress Bar Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">도전! 규칙 마스터</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1" id="quizHeaderTitle">단계 1 / 10</h2>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <div class="w-36 bg-slate-200 h-3 rounded-full overflow-hidden">
+                            <div id="quizProgressBar" class="bg-gradient-to-r from-sky-400 to-indigo-600 h-full w-[10%] transition-all duration-300"></div>
+                        </div>
+                        <span id="quizScoreBadge" class="text-sm font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-xl">
+                            <i class="fa-solid fa-star text-amber-500 mr-1"></i>0점
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Main Quiz Display Area -->
+                <div id="quizBox" class="space-y-6">
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <div class="inline-block bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-lg mb-3" id="quizCategory">
+                            대응 관계식 세우기
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-900 leading-snug" id="quizQuestionText">
+                            질문 텍스트가 들어가는 자리입니다.
+                        </h3>
+
+                        <!-- Visual Helper inside Quiz (Optional Table or Image) -->
+                        <div id="quizVisualHelper" class="mt-4 p-4 bg-white rounded-xl border border-slate-200 hidden overflow-x-auto">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div id="quizOptionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Dynamic Option Buttons -->
+                    </div>
+
+                    <!-- Hint & Explanation Panel -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button onclick="toggleQuizHint()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mr-1.5 text-sm"></i> 힌트 보기
+                        </button>
+                        <button onclick="nextQuizQuestion()" id="nextQuizBtn" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-md flex items-center">
+                            다음 문제 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+
+                    <div id="quizHintBox" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs text-amber-900 font-medium">
+                        💡 <strong>힌트:</strong> 두 양이 얼마씩 증가하고 있는지 차이를 살펴보세요!
+                    </div>
+
+                    <div id="quizExplanationBox" class="hidden p-4 rounded-xl text-xs font-semibold">
+                        <!-- Dynamic Result Explanation -->
+                    </div>
+                </div>
+
+                <!-- Quiz Completion Summary (Hidden by default) -->
+                <div id="quizResultBox" class="hidden text-center py-10 space-y-6">
+                    <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto bounce-short shadow-inner">
+                        🏆
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-black text-slate-900">축하합니다! 퀴즈 완주!</h3>
+                        <p class="text-slate-600 mt-2 text-sm" id="quizResultDetail">
+                            10문제 중 9문제를 맞혔어요! 멋진 수학 탐험가입니다.
+                        </p>
+                    </div>
+
+                    <div class="inline-flex items-center space-x-2 bg-slate-100 p-4 rounded-2xl text-lg font-bold">
+                        <span>획득 점수:</span>
+                        <span id="quizFinalScore" class="text-2xl font-black text-indigo-600">90점</span>
+                    </div>
+
+                    <div>
+                        <button onclick="restartQuiz()" class="bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-extrabold px-8 py-3 rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> 다시 도전하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-sandbox" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200">
+                <div class="mb-6">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">창의력 쑥쑥</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-1">나만의 대응 규칙 상자 🔮</h2>
+                    <p class="text-xs text-slate-500 mt-1">
+                        내가 직접 규칙을 만들고, 어떤 입력값이 들어왔을 때 무슨 결과가 나오는지 테스트해보세요!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Rule Creator Controls -->
+                    <div class="lg:col-span-5 bg-purple-50 p-6 rounded-2xl border border-purple-200 space-y-5">
+                        <h3 class="font-bold text-purple-950 text-base flex items-center">
+                            <i class="fa-solid fa-sliders text-purple-600 mr-2"></i> 규칙 기계 설정하기
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-purple-900 mb-1">연산 규칙 선택</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="setCustomOp('+')" id="customOp-add" class="custom-op-btn bg-purple-600 text-white font-bold py-2 rounded-xl text-sm transition">
+                                        더하기 (+)
+                                    </button>
+                                    <button onclick="setCustomOp('-')" id="customOp-sub" class="custom-op-btn bg-white text-purple-900 border border-purple-200 font-bold py-2 rounded-xl text-sm transition">
+                                        빼기 (-)
+                                    </button>
+                                    <button onclick="setCustomOp('×')" id="customOp-mul" class="custom-op-btn bg-white text-purple-900 border border-purple-200 font-bold py-2 rounded-xl text-sm transition">
+                                        곱하기 (×)
+                                    </button>
+                                    <button onclick="setCustomOp('÷')" id="customOp-div" class="custom-op-btn bg-white text-purple-900 border border-purple-200 font-bold py-2 rounded-xl text-sm transition">
+                                        나누기 (÷)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-purple-900 mb-1">규칙 값 설정 (N)</label>
+                                <input type="range" id="customNumSlider" min="1" max="10" value="3" oninput="updateCustomRule()" class="w-full accent-purple-600">
+                                <div class="flex justify-between text-xs font-bold text-purple-700 mt-1">
+                                    <span>1</span>
+                                    <span id="customNumDisplay" class="text-lg font-black text-purple-900">3</span>
+                                    <span>10</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-purple-200 text-center font-extrabold text-slate-800 text-base shadow-sm">
+                                나의 대응식: <span class="text-purple-600">결과(△) = 입력(□) <span id="customFormulaOpText">+</span> <span id="customFormulaNumText">3</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Machine Animation & Testing -->
+                    <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-6 text-white flex flex-col justify-between space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full font-mono">규칙 마법 상자 가동 중</span>
+                            <span class="text-xs text-slate-400">입력값을 넣고 버튼을 누르세요</span>
+                        </div>
+
+                        <!-- Interactive Machine Graphic -->
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-4 py-4">
+                            <!-- Input -->
+                            <div class="text-center space-y-2">
+                                <span class="text-xs font-bold text-slate-300 block">입력값 (□)</span>
+                                <input type="number" id="sandboxInputVal" value="5" class="w-20 h-16 bg-slate-800 border-2 border-indigo-500 rounded-2xl text-center text-2xl font-black text-indigo-300 focus:outline-none">
+                            </div>
+
+                            <div class="text-2xl text-purple-400">
+                                <i class="fa-solid fa-right-long hidden md:inline"></i>
+                                <i class="fa-solid fa-down-long inline md:hidden"></i>
+                            </div>
+
+                            <!-- Processing Box -->
+                            <div class="bg-gradient-to-br from-purple-600 to-indigo-700 p-5 rounded-3xl text-center shadow-lg transform pulse-soft border border-purple-400/30">
+                                <i class="fa-solid fa-gear text-yellow-300 text-3xl animate-spin mb-1"></i>
+                                <div class="text-xs font-bold text-purple-100" id="sandboxMachineText">입력 + 3</div>
+                            </div>
+
+                            <div class="text-2xl text-purple-400">
+                                <i class="fa-solid fa-right-long hidden md:inline"></i>
+                                <i class="fa-solid fa-down-long inline md:hidden"></i>
+                            </div>
+
+                            <!-- Output -->
+                            <div class="text-center space-y-2">
+                                <span class="text-xs font-bold text-slate-300 block">결과값 (△)</span>
+                                <div id="sandboxOutputVal" class="w-20 h-16 bg-slate-800 border-2 border-emerald-500 rounded-2xl flex items-center justify-center text-2xl font-black text-emerald-300">
+                                    8
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Automated Table Generation -->
+                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl space-y-2">
+                            <h4 class="text-xs font-bold text-slate-300">자동 생성된 대응 관계 표</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-center text-xs">
+                                    <thead class="text-purple-200 border-b border-white/10">
+                                        <tr>
+                                            <th class="p-1.5">입력 (□)</th>
+                                            <th class="p-1.5">1</th>
+                                            <th class="p-1.5">2</th>
+                                            <th class="p-1.5">3</th>
+                                            <th class="p-1.5">4</th>
+                                            <th class="p-1.5">5</th>
+                                            <th class="p-1.5">10</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sandboxTableBody" class="font-bold text-yellow-300">
+                                        <!-- Dynamic JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-report" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">학습 성취도</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-1">나의 탐험 기록 & 뱃지 🏆</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Stat Card 1 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 font-bold block">획득한 별점</span>
+                            <span id="reportScore" class="text-xl font-black text-slate-800">0 점</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 2 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 font-bold block">푼 퀴즈 수</span>
+                            <span id="reportSolved" class="text-xl font-black text-slate-800">0 / 10</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 3 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 font-bold block">샌드박스 테스트</span>
+                            <span id="reportSandboxCount" class="text-xl font-black text-slate-800">0 회</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 4 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 font-bold block">학습 등급</span>
+                            <span id="reportRank" class="text-xl font-black text-amber-600">초보 수사관</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badges Collection Grid -->
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center">
+                        <i class="fa-solid fa-medal text-amber-500 mr-2"></i> 명예 칭찬 뱃지 모음
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Badge 1 -->
+                        <div id="badge-card-1" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 opacity-50 transition">
+                            <div class="w-12 h-12 bg-amber-400 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+                                🔍
+                            </div>
+                            <h4 class="font-extrabold text-center text-slate-800 text-sm">규칙 탐색가</h4>
+                            <p class="text-center text-slate-500 text-xs mt-1">실습 탐구소에서 탐구를 완료하세요.</p>
+                        </div>
+
+                        <!-- Badge 2 -->
+                        <div id="badge-card-2" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 opacity-50 transition">
+                            <div class="w-12 h-12 bg-sky-400 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+                                ✏️
+                            </div>
+                            <h4 class="font-extrabold text-center text-slate-800 text-sm">기호 수사관</h4>
+                            <p class="text-center text-slate-500 text-xs mt-1">퀴즈 3문제 이상 정답 맞히기.</p>
+                        </div>
+
+                        <!-- Badge 3 -->
+                        <div id="badge-card-3" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 opacity-50 transition">
+                            <div class="w-12 h-12 bg-purple-400 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+                                🔮
+                            </div>
+                            <h4 class="font-extrabold text-center text-slate-800 text-sm">규칙 창작자</h4>
+                            <p class="text-center text-slate-500 text-xs mt-1">나만의 규칙 상자 가동해보기.</p>
+                        </div>
+
+                        <!-- Badge 4 -->
+                        <div id="badge-card-4" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 opacity-50 transition">
+                            <div class="w-12 h-12 bg-emerald-400 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+                                👑
+                            </div>
+                            <h4 class="font-extrabold text-center text-slate-800 text-sm">대응의 마법사</h4>
+                            <p class="text-center text-slate-500 text-xs mt-1">퀴즈 10문제를 모두 완료하기.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>© 초등학교 5학년 1학기 수학 3. 규칙과 대응 교육용 디지털 교구</span>
+            <span class="text-slate-400">생성형 수학 학습 플랫폼</span>
+        </div>
+    </footer>
+
+    <!-- Canvas for Confetti Fireworks -->
+    <canvas id="confettiCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <script>
+        // Global App State
+        const state = {
+            score: 0,
+            badges: {
+                explorer: false,
+                quizMaster: false,
+                creator: false,
+                wizard: false
+            },
+            simTopic: 'car', // 'car', 'triangle', 'age', 'chair'
+            simCount: 3,
+            quizIndex: 0,
+            quizScore: 0,
+            quizSolvedCount: 0,
+            sandboxOp: '+',
+            sandboxNum: 3,
+            sandboxTestCount: 0
+        };
+
+        // Web Audio API Synth for Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(130, audioCtx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                } else if (type === 'fanfare') {
+                    // Quick triad
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                        g.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.25);
+                        o.start(audioCtx.currentTime + idx * 0.1);
+                        o.stop(audioCtx.currentTime + idx * 0.1 + 0.25);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked");
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-indigo-700', 'shadow-md');
+                btn.classList.add('text-white', 'hover:bg-white/20');
+            });
+
+            document.getElementById(`sec-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.add('bg-white', 'text-indigo-700', 'shadow-md');
+            activeBtn.classList.remove('text-white', 'hover:bg-white/20');
+
+            if (tabName === 'explore') {
+                renderSimulation();
+            } else if (tabName === 'sandbox') {
+                updateCustomRule();
+            } else if (tabName === 'report') {
+                updateReportUI();
+            }
+        }
+
+        const topicsData = {
+            car: {
+                title: "자동차 수(□)에 따른 바퀴 수(△) 관찰",
+                header1: "자동차 수 (□)",
+                header2: "바퀴 수 (△)",
+                itemLabel: "자동차",
+                unit: "대",
+                subUnit: "개",
+                ruleOp: "×",
+                ruleVal: 4,
+                formulaLeft: "△",
+                formulaRight: "□",
+                calc: (n) => n * 4,
+                desc: (n) => `자동차 ${n}대일 때 바퀴는 ${n * 4}개입니다.`,
+                iconSVG: (n) => {
+                    let html = '';
+                    for (let i = 0; i < n; i++) {
+                        html += `
+                        <div class="bg-indigo-800/80 p-3 rounded-2xl border border-indigo-400/40 flex flex-col items-center space-y-2 transform hover:scale-105 transition shadow-md">
+                            <i class="fa-solid fa-car-side text-3xl text-sky-300"></i>
+                            <div class="flex space-x-2">
+                                <span class="w-3.5 h-3.5 bg-yellow-400 rounded-full border border-slate-900 inline-block"></span>
+                                <span class="w-3.5 h-3.5 bg-yellow-400 rounded-full border border-slate-900 inline-block"></span>
+                            </div>
+                        </div>`;
+                    }
+                    return html;
+                }
+            },
+            triangle: {
+                title: "정삼각형 수(□)에 따른 성냥개비 수(△) 관찰",
+                header1: "정삼각형 수 (□)",
+                header2: "성냥개비 수 (△)",
+                itemLabel: "정삼각형",
+                unit: "개",
+                subUnit: "개",
+                ruleOp: "×",
+                ruleVal: 3,
+                formulaLeft: "△",
+                formulaRight: "□",
+                calc: (n) => n * 3,
+                desc: (n) => `정삼각형 ${n}개를 만들 때 성냥개비는 ${n * 3}개 필요합니다.`,
+                iconSVG: (n) => {
+                    let html = '';
+                    for (let i = 0; i < n; i++) {
+                        html += `
+                        <div class="bg-emerald-900/60 p-3 rounded-2xl border border-emerald-400/40 flex flex-col items-center justify-center hover:scale-105 transition shadow-md">
+                            <i class="fa-solid fa-play -rotate-90 text-3xl text-emerald-300"></i>
+                            <span class="text-[10px] text-emerald-200 mt-1 font-mono">변 3개</span>
+                        </div>`;
+                    }
+                    return html;
+                }
+            },
+            age: {
+                title: "동생 나이(□)에 따른 형 나이(△) 관찰 (형은 3살 위)",
+                header1: "동생 나이 (□)",
+                header2: "형 나이 (△)",
+                itemLabel: "동생",
+                unit: "살",
+                subUnit: "살",
+                ruleOp: "+",
+                ruleVal: 3,
+                formulaLeft: "△",
+                formulaRight: "□",
+                calc: (n) => n + 3,
+                desc: (n) => `동생이 ${n}살일 때 형은 ${n + 3}살입니다.`,
+                iconSVG: (n) => {
+                    let html = '';
+                    for (let i = 0; i < n; i++) {
+                        html += `
+                        <div class="bg-amber-900/60 p-3 rounded-2xl border border-amber-400/40 flex items-center space-x-3 hover:scale-105 transition shadow-md">
+                            <div class="text-center">
+                                <i class="fa-solid fa-child text-xl text-amber-300"></i>
+                                <span class="block text-[10px] text-amber-200">동생 ${i+1}살</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
+                            <div class="text-center">
+                                <i class="fa-solid fa-user-graduate text-2xl text-amber-400"></i>
+                                <span class="block text-[10px] text-amber-200">형 ${(i+1)+3}살</span>
+                            </div>
+                        </div>`;
+                    }
+                    return html;
+                }
+            },
+            chair: {
+                title: "탁자 수(□)에 따른 의자 수(△) 관찰 (탁자 1개당 의자 6개)",
+                header1: "탁자 수 (□)",
+                header2: "의자 수 (△)",
+                itemLabel: "탁자",
+                unit: "개",
+                subUnit: "개",
+                ruleOp: "×",
+                ruleVal: 6,
+                formulaLeft: "△",
+                formulaRight: "□",
+                calc: (n) => n * 6,
+                desc: (n) => `탁자가 ${n}개일 때 의자는 ${n * 6}개 필요합니다.`,
+                iconSVG: (n) => {
+                    let html = '';
+                    for (let i = 0; i < n; i++) {
+                        html += `
+                        <div class="bg-purple-900/60 p-3 rounded-2xl border border-purple-400/40 flex flex-col items-center hover:scale-105 transition shadow-md">
+                            <i class="fa-solid fa-table text-2xl text-purple-300 mb-1"></i>
+                            <div class="grid grid-cols-3 gap-1 text-purple-200 text-xs">
+                                <i class="fa-solid fa-chair"></i>
+                                <i class="fa-solid fa-chair"></i>
+                                <i class="fa-solid fa-chair"></i>
+                                <i class="fa-solid fa-chair"></i>
+                                <i class="fa-solid fa-chair"></i>
+                                <i class="fa-solid fa-chair"></i>
+                            </div>
+                        </div>`;
+                    }
+                    return html;
+                }
+            }
+        };
+
+        function setExploreTopic(topicKey) {
+            state.simTopic = topicKey;
+            document.querySelectorAll('.exp-topic-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-700');
+            });
+            document.getElementById(`exp-topic-${topicKey}`).classList.add('bg-indigo-600', 'text-white');
+            document.getElementById(`exp-topic-${topicKey}`).classList.remove('bg-slate-100', 'text-slate-700');
+
+            // Unlock badge 1
+            unlockBadge('explorer');
+            renderSimulation();
+        }
+
+        function changeSimCount(delta) {
+            state.simCount = Math.max(1, Math.min(8, state.simCount + delta));
+            renderSimulation();
+        }
+
+        function renderSimulation() {
+            const topic = topicsData[state.simTopic];
+            document.getElementById('simTitle').textContent = topic.title;
+            document.getElementById('simCountDisplay').textContent = state.simCount;
+            document.getElementById('simSummaryText').textContent = topic.desc(state.simCount);
+            document.getElementById('simRuleTag').textContent = `규칙: ${topic.ruleOp} ${topic.ruleVal}`;
+
+            // Render SVGs
+            document.getElementById('simVisualBox').innerHTML = topic.iconSVG(state.simCount);
+
+            // Table headers & row
+            document.getElementById('tableHeader1').textContent = topic.header1;
+            const tableBody = document.getElementById('tableBodyRow');
+            
+            let rowHtml = `<tr><td class="p-2 bg-indigo-50 text-indigo-900 font-bold">${topic.header2}</td>`;
+            for (let i = 1; i <= 5; i++) {
+                const val = topic.calc(i);
+                const isSelected = (i === state.simCount);
+                rowHtml += `<td class="p-2 ${isSelected ? 'bg-yellow-200 text-slate-900 font-black rounded-lg scale-110' : ''}">${val}</td>`;
+            }
+            rowHtml += `</tr>`;
+            tableBody.innerHTML = rowHtml;
+
+            // Reset Formula Inputs for user practice
+            document.getElementById('formulaInstruction').textContent = `${topic.header1}와 ${topic.header2} 사이의 대응 관계식을 완성해보세요!`;
+            checkUserFormula();
+        }
+
+        function checkUserFormula() {
+            const topic = topicsData[state.simTopic];
+            const userOp = document.getElementById('formulaOp').value;
+            const userNum = parseInt(document.getElementById('formulaNum').value, 10);
+            const feedbackEl = document.getElementById('formulaFeedback');
+
+            if (userOp === topic.ruleOp && userNum === topic.ruleVal) {
+                feedbackEl.className = "text-xs font-bold text-center py-2 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300";
+                feedbackEl.innerHTML = `✨ 정답입니다! ${topic.header2} = ${topic.header1} ${topic.ruleOp} ${topic.ruleVal}`;
+                playSound('correct');
+            } else {
+                feedbackEl.className = "text-xs font-bold text-center py-2 rounded-lg bg-rose-100 text-rose-800 border border-rose-200";
+                feedbackEl.innerHTML = `🤔 연산 기호와 숫자를 다시 맞춰보세요. (${topic.ruleOp} 기호 생각하기)`;
+            }
+        }
+
+        const quizQuestions = [
+            {
+                category: "대응 관계식 세우기",
+                question: "자전거 1대에는 바퀴가 2개 있습니다. 자전거 수를 □, 바퀴 수를 △라 할 때, 올바른 대응 관계식은 무엇일까요?",
+                options: ["△ = □ + 2", "△ = □ × 2", "□ = △ × 2", "△ = □ ÷ 2"],
+                correct: 1,
+                hint: "자전거가 1대면 바퀴 2개, 2대면 4개, 3대면 6개입니다.",
+                explanation: "바퀴 수는 자전거 수의 2배이므로, '바퀴 수(△) = 자전거 수(□) × 2'가 올바른 대응식입니다."
+            },
+            {
+                category: "미래의 값 구하기",
+                question: "형의 나이(△)는 동생 나이(□)보다 4살 많습니다. (△ = □ + 4) 동생이 12살일 때, 형의 나이는 몇 살일까요?",
+                options: ["14살", "15살", "16살", "18살"],
+                correct: 2,
+                hint: "동생 나이 □에 12를 넣어서 계산해보세요.",
+                explanation: "형 나이(△) = 12 + 4 = 16살입니다."
+            },
+            {
+                category: "표에서 규칙 찾기",
+                question: "아래 표를 보고 빈칸 (ㄱ)에 들어갈 알맞은 수를 구하세요.",
+                visualTable: {
+                    headers: ["상자 수 (□)", "1", "2", "3", "4", "10"],
+                    rows: ["사탕 개수 (△)", "5", "10", "15", "(ㄱ)", "50"]
+                },
+                options: ["18", "20", "22", "25"],
+                correct: 1,
+                hint: "상자 수에 5를 곱하면 사탕 개수가 됩니다.",
+                explanation: "사탕 개수 = 상자 수 × 5 이므로, 상자가 4개일 때 사탕은 4 × 5 = 20개입니다."
+            },
+            {
+                category: "생활 속 대응 관계",
+                question: "긴 리본을 가위로 1번 자르면 2조각, 2번 자르면 3조각이 됩니다. 자른 횟수(□)와 조각 수(△)의 대응 관계식은?",
+                options: ["△ = □ + 1", "△ = □ × 2", "△ = □ - 1", "□ = △ + 1"],
+                correct: 0,
+                hint: "조각 수는 자른 횟수보다 항상 1만큼 더 큽니다.",
+                explanation: "조각 수(△)는 자른 횟수(□)보다 1 커지므로 △ = □ + 1 이 맞습니다."
+            },
+            {
+                category: "기호 식 완성",
+                question: "정오각형 1개에는 변이 5개 있습니다. 정오각형 수를 □, 변의 수 총합을 △라 할 때 옳은 식은?",
+                options: ["△ = □ + 5", "△ = □ × 5", "△ = □ ÷ 5", "□ = △ × 5"],
+                correct: 1,
+                hint: "정오각형이 2개면 변은 10개입니다.",
+                explanation: "변의 수(△)는 정오각형 수(□)의 5배이므로 △ = □ × 5 입니다."
+            },
+            {
+                category: "대응 관계 의미 알기",
+                question: "식 '△ = □ - 3' 이 나타내는 말로 올바른 것은 어느 것일까요?",
+                options: [
+                    "△는 □보다 3만큼 더 큽니다.",
+                    "△는 □보다 3만큼 더 작습니다.",
+                    "△는 □의 3배입니다.",
+                    "□는 △보다 3만큼 더 작습니다."
+                ],
+                correct: 1,
+                hint: "□에서 3을 뺀 것이 △가 됩니다.",
+                explanation: "△는 □에서 3을 뺀 값이므로, △는 □보다 3만큼 더 작습니다."
+            },
+            {
+                category: "큰 수 예측하기",
+                question: "의자 1개에 다리가 4개 있습니다. 의자가 50개 있다면 다리는 총 몇 개일까요?",
+                options: ["150개", "180개", "200개", "250개"],
+                correct: 2,
+                hint: "의자 수 × 4 = 다리 수 규칙을 사용하세요.",
+                explanation: "50 × 4 = 200개입니다."
+            },
+            {
+                category: "표 완성하기",
+                question: "한 묶음에 연필이 12자루씩 들어있습니다. 묶음 수(□)가 5묶음일 때 전체 연필 자루 수(△)는?",
+                options: ["48자루", "50자루", "60자루", "72자루"],
+                correct: 2,
+                hint: "12 × 5 를 계산해보세요.",
+                explanation: "연필 수 = 12 × 5 = 60자루입니다."
+            },
+            {
+                category: "규칙 적용하기",
+                question: "탁자 하나에 사람이 4명 앉을 수 있습니다. 32명이 모두 앉으려면 탁자는 최소 몇 개 필요할까요?",
+                options: ["6개", "7개", "8개", "9개"],
+                correct: 2,
+                hint: "사람 수(32) ÷ 4 = 탁자 수(□) 식이 성립합니다.",
+                explanation: "32 ÷ 4 = 8 이므로 탁자 8개가 필요합니다."
+            },
+            {
+                category: "마스터 도전",
+                question: "성냥개비로 정사각형을 옆으로 이어 붙여 만들고 있습니다. 정사각형 1개엔 4개, 2개엔 7개, 3개엔 10개가 듭니다. 대응식은?",
+                options: ["△ = □ × 4", "△ = □ × 3 + 1", "△ = □ × 3", "△ = □ × 2 + 2"],
+                correct: 1,
+                hint: "첫 번째는 4개지만, 하나씩 추가할 때마다 성냥개비가 3개씩 늘어납니다.",
+                explanation: "정사각형 수에 3을 곱한 뒤 1을 더하면 성냥개비 수가 됩니다! (△ = □ × 3 + 1)"
+            }
+        ];
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[state.quizIndex];
+            document.getElementById('quizHeaderTitle').textContent = `단계 ${state.quizIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('quizCategory').textContent = q.category;
+            document.getElementById('quizQuestionText').textContent = q.question;
+            
+            // Progress Bar
+            const progress = ((state.quizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progress}%`;
+
+            // Reset Buttons & Hint
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+            document.getElementById('quizHintBox').classList.add('hidden');
+            document.getElementById('quizHintBox').innerHTML = `💡 <strong>힌트:</strong> ${q.hint}`;
+            
+            const expBox = document.getElementById('quizExplanationBox');
+            expBox.classList.add('hidden');
+
+            // Visual Helper Table if exists
+            const helperBox = document.getElementById('quizVisualHelper');
+            if (q.visualTable) {
+                helperBox.classList.remove('hidden');
+                let tableHtml = `<table class="w-full text-center text-xs font-bold border-collapse">
+                    <tr class="bg-indigo-100 text-indigo-900">
+                        ${q.visualTable.headers.map(h => `<th class="p-2 border border-indigo-200">${h}</th>`).join('')}
+                    </tr>
+                    <tr class="bg-white text-slate-800">
+                        ${q.visualTable.rows.map(r => `<td class="p-2 border border-slate-200 ${r==='(ㄱ)' ? 'text-rose-600 text-base font-black' : ''}">${r}</td>`).join('')}
+                    </tr>
+                </table>`;
+                helperBox.innerHTML = tableHtml;
+            } else {
+                helperBox.classList.add('hidden');
+            }
+
+            // Options
+            const container = document.getElementById('quizOptionsContainer');
+            container.innerHTML = '';
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn bg-slate-100 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-400 p-4 rounded-2xl text-left text-sm font-bold text-slate-800 transition flex items-center justify-between";
+                btn.innerHTML = `
+                    <span>${idx + 1}. ${optText}</span>
+                    <i class="fa-regular fa-circle text-slate-400 opt-icon"></i>
+                `;
+                btn.onclick = () => selectQuizAnswer(idx, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedIdx, btnEl) {
+            const q = quizQuestions[state.quizIndex];
+            const allBtns = document.querySelectorAll('.quiz-opt-btn');
+            
+            // Disable further clicks
+            allBtns.forEach(b => b.disabled = true);
+
+            const expBox = document.getElementById('quizExplanationBox');
+            expBox.classList.remove('hidden');
+
+            if (selectedIdx === q.correct) {
+                btnEl.classList.remove('bg-slate-100', 'border-slate-200');
+                btnEl.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                btnEl.querySelector('.opt-icon').className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+                
+                playSound('correct');
+                state.score += 10;
+                state.quizScore += 10;
+                state.quizSolvedCount++;
+                
+                expBox.className = "p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200";
+                expBox.innerHTML = `🎉 <strong>정답입니다!</strong> ${q.explanation}`;
+                
+                // Unlock Badge 2
+                if (state.quizSolvedCount >= 3) unlockBadge('quizMaster');
+            } else {
+                btnEl.classList.remove('bg-slate-100', 'border-slate-200');
+                btnEl.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+                btnEl.querySelector('.opt-icon').className = "fa-solid fa-circle-xmark text-rose-600 text-lg";
+
+                // Highlight correct one
+                const correctBtn = allBtns[q.correct];
+                correctBtn.classList.remove('bg-slate-100', 'border-slate-200');
+                correctBtn.classList.add('bg-emerald-50', 'border-emerald-400');
+
+                playSound('wrong');
+
+                expBox.className = "p-4 rounded-xl text-xs font-semibold bg-rose-50 text-rose-900 border border-rose-200";
+                expBox.innerHTML = `😅 <strong>아쉽네요!</strong> 정답은 ${q.correct + 1}번입니다. <br>${q.explanation}`;
+            }
+
+            updateGlobalStatsUI();
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        function toggleQuizHint() {
+            const hintBox = document.getElementById('quizHintBox');
+            hintBox.classList.toggle('hidden');
+        }
+
+        function nextQuizQuestion() {
+            state.quizIndex++;
+            if (state.quizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizBox').classList.add('hidden');
+            document.getElementById('quizResultBox').classList.remove('hidden');
+            document.getElementById('quizFinalScore').textContent = `${state.quizScore}점`;
+            document.getElementById('quizResultDetail').textContent = `10문제 중 ${state.quizScore / 10}문제를 맞혔어요!`;
+
+            if (state.quizScore >= 80) {
+                playSound('fanfare');
+                triggerConfetti();
+            }
+
+            // Unlock badge 4
+            unlockBadge('wizard');
+        }
+
+        function restartQuiz() {
+            state.quizIndex = 0;
+            state.quizScore = 0;
+            document.getElementById('quizBox').classList.remove('hidden');
+            document.getElementById('quizResultBox').classList.add('hidden');
+            loadQuizQuestion();
+        }
+
+        function setCustomOp(op) {
+            state.sandboxOp = op;
+            document.querySelectorAll('.custom-op-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-white', 'text-purple-900');
+            });
+            event.currentTarget.classList.add('bg-purple-600', 'text-white');
+            event.currentTarget.classList.remove('bg-white', 'text-purple-900');
+
+            updateCustomRule();
+        }
+
+        function updateCustomRule() {
+            const num = parseInt(document.getElementById('customNumSlider').value, 10);
+            state.sandboxNum = num;
+            document.getElementById('customNumDisplay').textContent = num;
+            document.getElementById('customFormulaOpText').textContent = state.sandboxOp;
+            document.getElementById('customFormulaNumText').textContent = num;
+            document.getElementById('sandboxMachineText').textContent = `입력 ${state.sandboxOp} ${num}`;
+
+            // Calculate output for current input
+            calculateSandboxResult();
+            renderSandboxTable();
+
+            state.sandboxTestCount++;
+            if (state.sandboxTestCount >= 2) {
+                unlockBadge('creator');
+            }
+        }
+
+        function calculateSandboxResult() {
+            const inputVal = parseFloat(document.getElementById('sandboxInputVal').value) || 0;
+            let res = 0;
+            const N = state.sandboxNum;
+            switch(state.sandboxOp) {
+                case '+': res = inputVal + N; break;
+                case '-': res = inputVal - N; break;
+                case '×': res = inputVal * N; break;
+                case '÷': res = (N !== 0) ? (inputVal / N).toFixed(1) : 0; break;
+            }
+            document.getElementById('sandboxOutputVal').textContent = res;
+        }
+
+        function renderSandboxTable() {
+            const inputs = [1, 2, 3, 4, 5, 10];
+            const N = state.sandboxNum;
+            const op = state.sandboxOp;
+
+            let rowHtml = `<tr><td class="p-1.5 text-purple-200">결과 (△)</td>`;
+            inputs.forEach(x => {
+                let val = 0;
+                switch(op) {
+                    case '+': val = x + N; break;
+                    case '-': val = x - N; break;
+                    case '×': val = x * N; break;
+                    case '÷': val = (x / N).toFixed(1); break;
+                }
+                rowHtml += `<td class="p-1.5">${val}</td>`;
+            });
+            rowHtml += `</tr>`;
+            document.getElementById('sandboxTableBody').innerHTML = rowHtml;
+        }
+
+        function unlockBadge(badgeKey) {
+            if (!state.badges[badgeKey]) {
+                state.badges[badgeKey] = true;
+                playSound('fanfare');
+                triggerConfetti();
+                updateGlobalStatsUI();
+            }
+        }
+
+        function updateGlobalStatsUI() {
+            document.getElementById('globalScore').textContent = state.score;
+            document.getElementById('quizScoreBadge').innerHTML = `<i class="fa-solid fa-star text-amber-500 mr-1"></i>${state.quizScore}점`;
+            
+            const badgeCount = Object.values(state.badges).filter(Boolean).length;
+            document.getElementById('badgeCount').textContent = badgeCount;
+        }
+
+        function updateReportUI() {
+            document.getElementById('reportScore').textContent = `${state.score} 점`;
+            document.getElementById('reportSolved').textContent = `${state.quizSolvedCount} / 10`;
+            document.getElementById('reportSandboxCount').textContent = `${state.sandboxTestCount} 회`;
+
+            // Rank logic
+            let rank = "초보 수사관";
+            if (state.score >= 80) rank = "대응의 마법사 🧙‍♂️";
+            else if (state.score >= 40) rank = "규칙 탐정 🕵️‍♂️";
+            else if (state.score >= 10) rank = "열정 탐험가 🧭";
+            document.getElementById('reportRank').textContent = rank;
+
+            // Update badge cards opacity & style
+            const bMap = {
+                explorer: 'badge-card-1',
+                quizMaster: 'badge-card-2',
+                creator: 'badge-card-3',
+                wizard: 'badge-card-4'
+            };
+
+            for (const [key, cardId] of Object.entries(bMap)) {
+                const cardEl = document.getElementById(cardId);
+                if (state.badges[key]) {
+                    cardEl.classList.remove('opacity-50');
+                    cardEl.classList.add('border-amber-400', 'bg-amber-50/50', 'shadow-md');
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+
+            for (let i = 0; i < 80; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            let timer = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += 4;
+                });
+
+                timer++;
+                if (timer < 150) {
+                    animationFrame = requestAnimationFrame(draw);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            draw();
+        }
+
+        window.onload = function() {
+            loadQuizQuestion();
+            renderSimulation();
+            
+            // Event listener for sandbox dynamic input
+            document.getElementById('sandboxInputVal').addEventListener('input', calculateSandboxResult);
+        };
+    </script>
+</body>
+</html>
