@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우당탕탕 교통표지판 탐험대!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Jua for kid-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Jua', 'Noto Sans KR', 'sans-serif'],
+                        'body': ['Noto Sans KR', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .active-press:active {
+            transform: scale(0.95);
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.9); }
+        }
+        .glow-effect {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Walking Animation */
+        @keyframes walk-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .anim-walk {
+            animation: walk-bounce 0.4s infinite ease-in-out;
+        }
+
+        /* Car Drive Animation */
+        @keyframes drive-car {
+            0% { transform: translateX(120%); }
+            100% { transform: translateX(-120%); }
+        }
+        .anim-car {
+            animation: drive-car 3s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-200 via-amber-50 to-emerald-100 min-h-screen text-slate-800 font-sans select-none overflow-x-hidden">
+
+    <!-- Top Header Banner -->
+    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 border-b-4 border-amber-300">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl sm:text-4xl animate-bounce-slow">🐻</span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-sky-600 tracking-wide flex items-center gap-2">
+                        <span>우당탕탕 교통표지판 탐험대!</span>
+                        <span class="bg-amber-400 text-amber-950 text-xs px-2 py-0.5 rounded-full font-bold">초등 1·2학년</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 font-sans-body">신나는 놀이와 함께 안전 수칙을 배워봐요!</p>
+                </div>
+            </div>
+
+            <!-- Score & Star Counter -->
+            <div class="flex items-center space-x-3 bg-amber-100 px-4 py-2 rounded-2xl border-2 border-amber-300 shadow-inner">
+                <span class="text-2xl animate-spin" style="animation-duration: 6s;">⭐</span>
+                <div>
+                    <div class="text-xs text-amber-800 font-bold">내 별 모음</div>
+                    <div id="star-count" class="text-lg font-black text-amber-600">30</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Navigation Tabs -->
+        <nav class="flex flex-wrap justify-center gap-2 sm:gap-4 bg-white/60 p-2 rounded-3xl shadow-sm border border-white">
+            <button onclick="app.switchTab('learn')" id="tab-learn" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-sky-500 text-white shadow-md active-press">
+                📖 표지판 배움터
+            </button>
+            <button onclick="app.switchTab('game')" id="tab-game" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-sky-50 active-press">
+                🚶‍♂️ 도로 위 안전 탐험
+            </button>
+            <button onclick="app.switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-sky-50 active-press">
+                🧩 신나는 퀴즈 게임
+            </button>
+            <button onclick="app.switchTab('badges')" id="tab-badges" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-sky-50 active-press">
+                🏆 내 훈장함
+            </button>
+        </nav>
+
+        <!-- Mascot Companion Helper Box -->
+        <section class="bg-gradient-to-r from-amber-200 to-yellow-100 border-4 border-amber-300 rounded-3xl p-4 sm:p-5 shadow-lg flex items-center space-x-4">
+            <div class="text-4xl sm:text-5xl bg-white p-3 rounded-2xl shadow-inner border-2 border-amber-300 flex-shrink-0 animate-bounce-slow">
+                🐼
+            </div>
+            <div class="flex-grow">
+                <div class="text-xs font-bold text-amber-800 uppercase tracking-wider">신호곰의 안전 꿀팁 💡</div>
+                <div id="mascot-speech" class="text-sm sm:text-base font-bold text-slate-800 mt-0.5 font-sans-body">
+                    안녕! 나는 교통안전 지킴이 <b>신호곰</b>이야! 궁금한 표지판을 누르면 친절하게 읽어줄게!
+                </div>
+            </div>
+            <button onclick="app.repeatMascotSpeech()" class="bg-white hover:bg-amber-50 text-amber-700 px-3 py-2 rounded-xl text-xs font-bold border border-amber-300 shadow flex items-center space-x-1 flex-shrink-0 active-press">
+                <span>🔊</span>
+                <span class="hidden sm:inline">다시 듣기</span>
+            </button>
+        </section>
+
+        <!-- TAB 1: LEARN (Sign Explorer) -->
+        <section id="sec-learn" class="tab-content space-y-6">
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap justify-center gap-2">
+                <button onclick="app.filterSigns('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-slate-800 text-white shadow">전체 보기</button>
+                <button onclick="app.filterSigns('caution')" id="filter-caution" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-amber-400 text-amber-950 shadow">⚠️ 주의 표지판</button>
+                <button onclick="app.filterSigns('indication')" id="filter-indication" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-sky-500 text-white shadow">🔵 지시 표지판</button>
+                <button onclick="app.filterSigns('prohibition')" id="filter-prohibition" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-rose-500 text-white shadow">🛑 규제(금지) 표지판</button>
+            </div>
+
+            <!-- Signs Grid -->
+            <div id="sign-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- TAB 2: LIVE ROAD EXPLORATION GAME -->
+        <section id="sec-game" class="tab-content hidden space-y-6">
+            <div class="bg-sky-100 border-4 border-sky-300 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-2xl font-bold text-sky-900 flex items-center space-x-2">
+                            <span>🚶‍♂️</span>
+                            <span>리얼 도로 위 안전 탐험!</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm font-sans-body font-bold text-sky-700">버튼을 눌러 길을 따라 걷고, 신호등과 표지판에 맞게 행동하세요!</p>
+                    </div>
+                    <div class="bg-white px-4 py-2 rounded-2xl border-2 border-sky-300 flex items-center space-x-3 shadow">
+                        <span class="font-bold text-slate-700 text-sm">안전 진행도</span>
+                        <div class="w-32 bg-slate-200 h-4 rounded-full overflow-hidden border border-slate-300">
+                            <div id="road-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Road Stage Canvas Display -->
+                <div id="road-stage" class="relative w-full h-72 sm:h-80 bg-slate-800 rounded-3xl border-4 border-slate-900 overflow-hidden shadow-2xl flex flex-col justify-between p-3 select-none">
+                    
+                    <!-- Top Environment Line (Buildings/Trees & Sky) -->
+                    <div class="h-16 w-full bg-sky-300 rounded-t-2xl relative overflow-hidden flex items-end px-4 justify-between border-b-4 border-emerald-600">
+                        <div class="text-2xl">🏫</div>
+                        <div class="text-2xl">🏪</div>
+                        <div class="text-2xl">🌳</div>
+                        <div class="text-2xl">🏠</div>
+                        <div class="text-2xl">🌳</div>
+                        <div class="text-2xl">🏫</div>
+                    </div>
+
+                    <!-- Road Surface & Markings -->
+                    <div class="relative flex-grow bg-slate-700 flex flex-col justify-center overflow-hidden my-1 rounded-xl">
+                        <!-- Road Dashed Center line -->
+                        <div class="w-full border-t-2 border-dashed border-yellow-400 absolute top-1/2"></div>
+                        
+                        <!-- Crosswalk Zone (Appears dynamically) -->
+                        <div id="stage-crosswalk" class="absolute right-16 top-0 bottom-0 w-24 bg-slate-700 hidden flex flex-col justify-around py-1 border-x-4 border-yellow-300">
+                            <div class="h-3 w-full bg-white"></div>
+                            <div class="h-3 w-full bg-white"></div>
+                            <div class="h-3 w-full bg-white"></div>
+                            <div class="h-3 w-full bg-white"></div>
+                        </div>
+
+                        <!-- Traffic Light Signal (Appears at Crosswalk) -->
+                        <div id="stage-traffic-light" class="absolute right-36 top-2 z-20 hidden bg-slate-900 p-2 rounded-xl border-2 border-slate-600 flex space-x-2 shadow-lg">
+                            <div id="light-red" class="w-6 h-6 rounded-full bg-red-600 opacity-30 shadow"></div>
+                            <div id="light-green" class="w-6 h-6 rounded-full bg-emerald-500 opacity-30 shadow"></div>
+                        </div>
+
+                        <!-- Traffic Sign Pole (Dynamic) -->
+                        <div id="stage-sign-container" class="absolute right-12 top-2 z-20 hidden flex flex-col items-center">
+                            <div id="stage-sign-icon" class="w-14 h-14 bg-white rounded-xl border-2 border-amber-400 p-1 shadow-md"></div>
+                            <div class="w-1.5 h-12 bg-slate-400"></div>
+                        </div>
+
+                        <!-- Moving Car Obstacle -->
+                        <div id="stage-car" class="absolute z-10 text-4xl hidden transition-all duration-300">
+                            🚗
+                        </div>
+
+                        <!-- Player Character -->
+                        <div id="stage-player" class="absolute left-6 top-1/2 -translate-y-1/2 z-20 text-4xl sm:text-5xl transition-all duration-300 flex flex-col items-center">
+                            <div id="player-hand-icon" class="text-lg opacity-0 transition-opacity">✋</div>
+                            <span id="player-avatar">👧</span>
+                        </div>
+                    </div>
+
+                    <!-- Situation Dialog Overlay Box -->
+                    <div id="road-status-box" class="bg-amber-100 border-2 border-amber-300 rounded-2xl p-3 text-center text-amber-950 font-bold text-sm sm:text-base shadow">
+                        [전진하기] 버튼을 눌러 출발하세요! 앞을 잘 살피며 전진해 봅시다!
+                    </div>
+                </div>
+
+                <!-- Interactive Action Controls -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-2">
+                    <button onclick="app.walkForward()" id="btn-walk" class="bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-2xl font-extrabold text-base sm:text-lg border-b-4 border-emerald-700 active-press shadow-lg flex flex-col items-center justify-center space-y-1">
+                        <span class="text-2xl">🏃‍♂️</span>
+                        <span>앞으로 걸어가기</span>
+                    </button>
+                    <button onclick="app.stopAndLook()" id="btn-stop" class="bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-2xl font-extrabold text-base sm:text-lg border-b-4 border-amber-700 active-press shadow-lg flex flex-col items-center justify-center space-y-1">
+                        <span class="text-2xl">🛑</span>
+                        <span>멈춰서 좌우 살피기</span>
+                    </button>
+                    <button onclick="app.raiseHandAndCross()" id="btn-hand" class="bg-sky-500 hover:bg-sky-600 text-white p-4 rounded-2xl font-extrabold text-base sm:text-lg border-b-4 border-sky-700 active-press shadow-lg flex flex-col items-center justify-center space-y-1">
+                        <span class="text-2xl">✋</span>
+                        <span>손들고 건너기</span>
+                    </button>
+                </div>
+
+                <div id="road-feedback-alert" class="hidden p-4 rounded-2xl text-center font-bold text-lg border-2"></div>
+            </div>
+        </section>
+
+        <!-- TAB 3: QUIZ ARENA (Dynamic Games) -->
+        <section id="sec-quiz" class="tab-content hidden space-y-6">
+            <div class="bg-white border-4 border-purple-200 rounded-3xl p-6 shadow-xl max-w-2xl mx-auto space-y-6">
+                <!-- Quiz Mode Selector -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="app.setQuizMode('classic')" id="qmode-classic" class="p-3 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow">⏱️ 타임어택 퀴즈</button>
+                    <button onclick="app.setQuizMode('ox')" id="qmode-ox" class="p-3 rounded-2xl font-bold text-sm bg-slate-100 text-slate-700 shadow">⚡ O / X 스피드</button>
+                </div>
+
+                <!-- Quiz Progress & Stats Bar -->
+                <div class="flex items-center justify-between border-b-2 border-purple-100 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span id="quiz-streak-badge" class="bg-amber-400 text-amber-950 px-3 py-1 rounded-full text-xs font-black shadow-sm">COMBO x0</span>
+                        <span id="quiz-progress-text" class="text-sm font-bold text-slate-500">문제 1 / 5</span>
+                    </div>
+                    <div id="quiz-timer-box" class="flex items-center space-x-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full font-black text-sm">
+                        <span>⏳</span>
+                        <span id="quiz-time-left">15</span>초
+                    </div>
+                </div>
+
+                <!-- Question Prompt Box -->
+                <div class="text-center space-y-4">
+                    <div id="quiz-question-icon" class="inline-flex justify-center items-center w-32 h-32 bg-amber-50 rounded-3xl border-4 border-amber-300 shadow-md p-2">
+                        <!-- Sign Icon or Emoji -->
+                    </div>
+                    <h3 id="quiz-question-title" class="text-xl sm:text-2xl font-extrabold text-slate-800">
+                        다음 표지판의 알맞은 뜻은 무엇일까요?
+                    </h3>
+                </div>
+
+                <!-- Multiple Choice Answers Container -->
+                <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamically injected choices -->
+                </div>
+
+                <div id="quiz-feedback-box" class="hidden p-4 rounded-2xl text-center font-bold text-lg"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: BADGES (Achievements) -->
+        <section id="sec-badges" class="tab-content hidden space-y-6">
+            <div class="bg-white border-4 border-amber-200 rounded-3xl p-6 shadow-xl space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-extrabold text-amber-800">🏆 내 훈장 상자</h2>
+                    <p class="text-sm text-slate-600 font-sans-body">퀴즈를 풀고 도로 탐험을 완료하여 멋진 안전 훈장을 모두 모아보세요!</p>
+                </div>
+                <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Detailed Sign Modal -->
+    <div id="sign-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl border-4 border-amber-300 max-w-md w-full p-6 shadow-2xl space-y-4 relative animate-bounce-slow" style="animation-iteration-count: 1; animation-duration: 0.3s;">
+            <button onclick="app.closeModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-600 w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center shadow">✕</button>
+            <div id="modal-content" class="text-center space-y-4 pt-2">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio & Speech Synthesis & Effects Controller -->
+    <script>
+        /* --- Web Audio API SFX Generator --- */
+        class SoundFX {
+            constructor() {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.ctx = AudioContext ? new AudioContext() : null;
+            }
+
+            playPop() {
+                if (!this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            }
+
+            playSuccess(count = 1) {
+                if (!this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const now = this.ctx.currentTime;
+                const notes = count === 2 ? [523.25, 659.25, 783.99, 1046.50] : [523.25, 659.25, 783.99];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.25);
+                });
+            }
+
+            playError() {
+                if (!this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(160, now + 0.15);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        /* --- Speech Controller for TTS --- */
+        class SpeechController {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.lastSpokenText = "";
+            }
+
+            speak(text) {
+                if (!this.synth) return;
+                this.synth.cancel(); // Stop previous speech
+                this.lastSpokenText = text;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ko-KR';
+                utterance.rate = 0.88; // friendly kid speed
+                utterance.pitch = 1.25; // bright kid pitch
+                this.synth.speak(utterance);
+            }
+
+            repeat() {
+                if (this.lastSpokenText) {
+                    this.speak(this.lastSpokenText);
+                }
+            }
+        }
+
+        /* --- Confetti Celebration FX --- */
+        class ConfettiFX {
+            burst(count = 50) {
+                for (let i = 0; i < count; i++) {
+                    const el = document.createElement('div');
+                    el.style.position = 'fixed';
+                    el.style.left = `${Math.random() * 100}vw`;
+                    el.style.top = `-20px`;
+                    el.style.width = `${Math.random() * 10 + 6}px`;
+                    el.style.height = `${Math.random() * 10 + 6}px`;
+                    el.style.backgroundColor = ['#f43f5e', '#3b82f6', '#10b981', '#fbbf24', '#8b5cf6'][Math.floor(Math.random() * 5)];
+                    el.style.borderRadius = '50%';
+                    el.style.zIndex = '9999';
+                    el.style.pointerEvents = 'none';
+                    el.style.transition = `all ${Math.random() * 1.5 + 1}s ease-out`;
+                    document.body.appendChild(el);
+
+                    setTimeout(() => {
+                        el.style.top = `${Math.random() * 80 + 20}vh`;
+                        el.style.left = `${parseFloat(el.style.left) + (Math.random() * 40 - 20)}vw`;
+                        el.style.opacity = '0';
+                        el.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    }, 50);
+
+                    setTimeout(() => el.remove(), 2500);
+                }
+            }
+        }
+
+        /* --- Traffic Signs Data Base --- */
+        const TRAFFIC_SIGNS = [
+            {
+                id: 1,
+                name: "어린이 보호구역",
+                category: "caution",
+                typeBadge: "⚠️ 주의 표지판",
+                borderColor: "border-amber-400",
+                bgColor: "bg-amber-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><polygon points="50,5 95,90 5,90" fill="#facc15" stroke="#ca8a04" stroke-width="6"/><circle cx="50" cy="45" r="9" fill="#1e293b"/><path d="M38,70 Q50,58 62,70 L58,85 L42,85 Z" fill="#1e293b"/><circle cx="70" cy="55" r="7" fill="#1e293b"/><path d="M63,75 Q72,66 78,75 L75,85 L66,85 Z" fill="#1e293b"/></svg>`,
+                desc: "학교 주변이에요! 자동차 속도를 줄이고 어린이가 있는지 주위를 아주 잘 살펴야 해요.",
+                rule: "속도를 줄이고 양옆을 철저히 살펴요!"
+            },
+            {
+                id: 2,
+                name: "횡단보도",
+                category: "indication",
+                typeBadge: "🔵 지시 표지판",
+                borderColor: "border-sky-400",
+                bgColor: "bg-sky-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><rect x="10" y="10" width="80" height="80" rx="16" fill="#3b82f6"/><rect x="25" y="25" width="50" height="50" rx="8" fill="#ffffff"/><line x1="33" y1="35" x2="33" y2="65" stroke="#3b82f6" stroke-width="5" stroke-dasharray="4,4"/><line x1="43" y1="35" x2="43" y2="65" stroke="#3b82f6" stroke-width="5" stroke-dasharray="4,4"/><line x1="53" y1="35" x2="53" y2="65" stroke="#3b82f6" stroke-width="5" stroke-dasharray="4,4"/><line x1="63" y1="35" x2="63" y2="65" stroke="#3b82f6" stroke-width="5" stroke-dasharray="4,4"/></svg>`,
+                desc: "길을 안전하게 건널 수 있는 파란색 횡단보도 표지판이에요.",
+                rule: "초록불에 손을 들고 건너요!"
+            },
+            {
+                id: 3,
+                name: "보행자 통행금지",
+                category: "prohibition",
+                typeBadge: "🛑 규제(금지) 표지판",
+                borderColor: "border-rose-500",
+                bgColor: "bg-rose-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="42" fill="#ef4444" stroke="#ffffff" stroke-width="6"/><circle cx="50" cy="38" r="9" fill="#ffffff"/><path d="M38,62 Q50,52 62,62 L58,78 L42,78 Z" fill="#ffffff"/><line x1="22" y1="22" x2="78" y2="78" stroke="#ffffff" stroke-width="8"/></svg>`,
+                desc: "사람이 걸어가면 아주 위험한 도로예요! 절대 들어가면 안 돼요.",
+                rule: "절대 걸어 들어가면 안 돼요!"
+            },
+            {
+                id: 4,
+                name: "신호등",
+                category: "caution",
+                typeBadge: "⚠️ 주의 표지판",
+                borderColor: "border-amber-400",
+                bgColor: "bg-amber-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><polygon points="50,5 95,90 5,90" fill="#facc15" stroke="#ca8a04" stroke-width="6"/><circle cx="50" cy="38" r="8" fill="#ef4444"/><circle cx="50" cy="58" r="8" fill="#facc15"/><circle cx="50" cy="78" r="8" fill="#22c55e"/></svg>`,
+                desc: "앞쪽에 신호등이 나타나요! 빨간불인지 초록불인지 꼭 확인하세요.",
+                rule: "신호등 색깔을 미리 확인해요!"
+            },
+            {
+                id: 5,
+                name: "자전거 및 보행자 통행구분",
+                category: "indication",
+                typeBadge: "🔵 지시 표지판",
+                borderColor: "border-sky-400",
+                bgColor: "bg-sky-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="44" fill="#3b82f6"/><circle cx="35" cy="40" r="6" fill="#ffffff"/><circle cx="65" cy="40" r="6" fill="#ffffff"/><path d="M25,70 L45,55 L55,70" fill="none" stroke="#ffffff" stroke-width="5"/></svg>`,
+                desc: "자전거와 사람이 다니는 길이 나누어져 있는 안전한 도로예요.",
+                rule: "내 길로 안전하게 다녀요!"
+            },
+            {
+                id: 6,
+                name: "주정차 금지",
+                category: "prohibition",
+                typeBadge: "🛑 규제(금지) 표지판",
+                borderColor: "border-rose-500",
+                bgColor: "bg-rose-50",
+                svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="42" fill="#3b82f6" stroke="#ef4444" stroke-width="8"/><line x1="25" y1="25" x2="75" y2="75" stroke="#ef4444" stroke-width="8"/><line x1="50" y1="20" x2="50" y2="80" stroke="#ef4444" stroke-width="6"/></svg>`,
+                desc: "자동차를 세워두거나 잠깐 주차하면 절대 안 되는 곳이에요.",
+                rule: "차를 세우지 않는 곳이에요!"
+            }
+        ];
+
+        /* --- Badges Data Base --- */
+        const BADGES_DATA = [
+            { id: 'badge-explorer', title: "표지판 박사", desc: "모든 표지판을 살펴보고 공부하기", icon: "🎓", unlocked: true },
+            { id: 'badge-street-hero', title: "도로 위 영웅", desc: "리얼 도로 안전 탐험을 안전하게 완주하기", icon: "🛡️", unlocked: false },
+            { id: 'badge-quiz-master', title: "퀴즈 척척박사", desc: "퀴즈 게임에서 연속 3문제 정답 맞추기", icon: "⭐", unlocked: false }
+        ];
+
+        /* --- Main Application Controller --- */
+        class TrafficSafetyApp {
+            constructor() {
+                this.sfx = new SoundFX();
+                this.speech = new SpeechController();
+                this.confetti = new ConfettiFX();
+
+                this.stars = 30;
+                this.currentTab = 'learn';
+                this.currentCategoryFilter = 'all';
+
+                // Quiz State
+                this.quizGameMode = 'classic';
+                this.quizIndex = 0;
+                this.quizScore = 0;
+                this.comboCount = 0;
+                this.timerInterval = null;
+                this.timeLeft = 15;
+                this.quizQuestions = [];
+
+                // Live Road Exploration State
+                this.playerPosition = 5; 
+                this.currentRoadStage = 1; 
+                this.stageStatus = 'normal'; 
+                this.signalColor = 'red'; 
+                this.signalInterval = null;
+
+                this.unlockedBadges = new Set(['badge-explorer']);
+                this.currentModalSign = null;
+
+                this.initUI();
+            }
+
+            initUI() {
+                this.renderSignGrid();
+                this.setupQuizQuestions();
+                this.resetRoadStage();
+                this.renderBadges();
+                this.updateMascotText("안녕! 나는 교통안전 지킴이 <b>신호곰</b>이야! 표지판을 누르면 귀여운 목소리로 읽어줄게!");
+            }
+
+            switchTab(tabId) {
+                this.sfx.playPop();
+                this.currentTab = tabId;
+
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.className = "tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-white text-slate-600 hover:bg-sky-50 active-press shadow-sm";
+                });
+
+                const activeBtn = document.getElementById(`tab-${tabId}`);
+                if (tabId === 'learn') activeBtn.className = "tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-sky-500 text-white shadow-md active-press";
+                if (tabId === 'game') activeBtn.className = "tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-emerald-500 text-white shadow-md active-press";
+                if (tabId === 'quiz') activeBtn.className = "tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-purple-600 text-white shadow-md active-press";
+                if (tabId === 'badges') activeBtn.className = "tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all bg-amber-500 text-white shadow-md active-press";
+
+                if (tabId === 'quiz') {
+                    this.startQuizRound();
+                }
+            }
+
+            updateMascotText(htmlText, speakText = "") {
+                const speechBox = document.getElementById('mascot-speech');
+                if (speechBox) speechBox.innerHTML = htmlText;
+                if (speakText) {
+                    this.speech.speak(speakText);
+                }
+            }
+
+            repeatMascotSpeech() {
+                this.sfx.playPop();
+                this.speech.repeat();
+            }
+
+            addStars(amount) {
+                this.stars += amount;
+                const starEl = document.getElementById('star-count');
+                if (starEl) starEl.innerText = this.stars;
+                this.confetti.burst(15);
+            }
+
+            /* --- Tab 1: Learn Explorer --- */
+            filterSigns(category) {
+                this.sfx.playPop();
+                this.currentCategoryFilter = category;
+                
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('ring-4', 'ring-slate-900');
+                });
+                document.getElementById(`filter-${category}`).classList.add('ring-4', 'ring-slate-900');
+
+                this.renderSignGrid();
+            }
+
+            renderSignGrid() {
+                const grid = document.getElementById('sign-grid');
+                if (!grid) return;
+
+                const filtered = this.currentCategoryFilter === 'all' 
+                    ? TRAFFIC_SIGNS 
+                    : TRAFFIC_SIGNS.filter(s => s.category === this.currentCategoryFilter);
+
+                grid.innerHTML = filtered.map(sign => `
+                    <div onclick="app.openSignModal(${sign.id})" class="bg-white rounded-3xl p-5 border-4 ${sign.borderColor} shadow-xl hover:scale-105 transition-transform cursor-pointer flex flex-col items-center space-y-3 relative overflow-hidden group">
+                        <span class="absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-700">${sign.typeBadge}</span>
+                        <div class="w-28 h-28 p-2 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            ${sign.svg}
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-extrabold text-slate-900">${sign.name}</h3>
+                            <p class="text-xs font-sans-body text-slate-500 mt-1 line-clamp-1">${sign.desc}</p>
+                        </div>
+                        <div class="w-full bg-sky-50 text-sky-700 py-2 rounded-xl text-xs font-bold text-center border border-sky-200">
+                            🔍 터치해서 자세히 보기
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            openSignModal(id) {
+                this.sfx.playPop();
+                const sign = TRAFFIC_SIGNS.find(s => s.id === id);
+                if (!sign) return;
+                this.currentModalSign = sign;
+
+                const modal = document.getElementById('sign-modal');
+                const content = document.getElementById('modal-content');
+
+                content.innerHTML = `
+                    <div class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">${sign.typeBadge}</div>
+                    <div class="w-36 h-36 mx-auto bg-slate-50 rounded-3xl border-4 ${sign.borderColor} p-3 shadow-inner flex items-center justify-center">
+                        ${sign.svg}
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-900">${sign.name}</h3>
+                    <p class="text-sm font-sans-body text-slate-600 bg-slate-50 p-3 rounded-2xl border">${sign.desc}</p>
+                    <div class="bg-amber-50 border-2 border-amber-300 p-3 rounded-2xl text-amber-900 font-bold text-sm">
+                        🛡️ 어린이 안전 약속: ${sign.rule}
+                    </div>
+                    <button onclick="app.speakSignDetails()" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-2xl font-bold shadow-md active-press flex items-center justify-center space-x-2">
+                        <span>🔊</span>
+                        <span>음성으로 설명 듣기</span>
+                    </button>
+                `;
+
+                modal.classList.remove('hidden');
+                this.speech.speak(`${sign.name}. ${sign.desc} 어린이 안전 약속. ${sign.rule}`);
+            }
+
+            closeModal() {
+                this.sfx.playPop();
+                document.getElementById('sign-modal').classList.add('hidden');
+            }
+
+            speakSignDetails() {
+                if (this.currentModalSign) {
+                    this.speech.speak(`${this.currentModalSign.name}. ${this.currentModalSign.desc}. ${this.currentModalSign.rule}`);
+                }
+            }
+
+            /* --- Tab 2: Live Road Exploration Game --- */
+            resetRoadStage() {
+                this.playerPosition = 5;
+                this.currentRoadStage = 1;
+                this.stageStatus = 'normal';
+                
+                this.updatePlayerUI();
+                this.updateRoadProgress();
+                this.setupStageEvent();
+            }
+
+            setupStageEvent() {
+                const statusBox = document.getElementById('road-status-box');
+                const crosswalk = document.getElementById('stage-crosswalk');
+                const trafficLight = document.getElementById('stage-traffic-light');
+                const signContainer = document.getElementById('stage-sign-container');
+                const signIcon = document.getElementById('stage-sign-icon');
+                const car = document.getElementById('stage-car');
+
+                crosswalk.classList.add('hidden');
+                trafficLight.classList.add('hidden');
+                signContainer.classList.add('hidden');
+                car.classList.add('hidden');
+                if (this.signalInterval) clearInterval(this.signalInterval);
+
+                if (this.currentRoadStage === 1) {
+                    this.stageStatus = 'caution_zone';
+                    signContainer.classList.remove('hidden');
+                    signIcon.innerHTML = TRAFFIC_SIGNS[0].svg;
+                    statusBox.innerHTML = "⚠️ 앞쪽에 <b>[어린이 보호구역]</b> 표지판이 보여요! 속도를 줄이고 멈춰서 주위를 잘 살펴볼까요?";
+                    this.speech.speak("어린이 보호구역 표지판이 보여요! 멈춰서 주변을 살펴봅시다!");
+                } else if (this.currentRoadStage === 2) {
+                    this.stageStatus = 'crosswalk_light';
+                    crosswalk.classList.remove('hidden');
+                    trafficLight.classList.remove('hidden');
+                    signContainer.classList.remove('hidden');
+                    signIcon.innerHTML = TRAFFIC_SIGNS[1].svg;
+
+                    this.setTrafficSignal('red');
+                    statusBox.innerHTML = "🚦 횡단보도 신호등이 <b>빨간불</b>이에요! 멈춰서 초록불이 될 때까지 기다려야 해요!";
+                    this.speech.speak("횡단보도 신호등이 빨간불이에요! 멈춰서 기다리세요!");
+
+                    this.signalInterval = setTimeout(() => {
+                        this.setTrafficSignal('green');
+                        statusBox.innerHTML = "🟢 신호등이 <b>초록불</b>로 바뀌었어요! 🛑 <b>[멈춰서 좌우 살피기]</b> 후 ✋ <b>[손들고 건너기]</b>를 선택하세요!";
+                        this.speech.speak("초록불로 바뀌었어요! 멈춰서 좌우를 살핀 후 손을 들고 건너세요!");
+                    }, 3500);
+                } else if (this.currentRoadStage === 3) {
+                    this.stageStatus = 'car_hazard';
+                    car.classList.remove('hidden');
+                    car.style.right = '10%';
+                    car.style.top = '25%';
+
+                    statusBox.innerHTML = "🚗 멀리서 자동차가 접근하고 있어요! 무작정 뛰지 말고 <b>[멈춰서 좌우 살피기]</b>를 눌러 차가 지나갈 때까지 기다리세요!";
+                    this.speech.speak("달려오는 차가 있어요! 멈춰서 차가 지나가는지 확인하세요!");
+                } else {
+                    this.stageStatus = 'complete';
+                    statusBox.innerHTML = "🎉 축하합니다! 안전하게 실제 도로를 완주했어요! 당신은 명예 교통안전 지킴이!";
+                    this.speech.speak("축하합니다! 안전하게 도로 건너기 탐험을 완료했어요!");
+                    this.confetti.burst(100);
+                    this.addStars(30);
+                    this.unlockBadge('badge-street-hero');
+                }
+            }
+
+            setTrafficSignal(color) {
+                this.signalColor = color;
+                const redLight = document.getElementById('light-red');
+                const greenLight = document.getElementById('light-green');
+
+                if (color === 'red') {
+                    redLight.classList.remove('opacity-30');
+                    redLight.classList.add('opacity-100', 'animate-pulse');
+                    greenLight.classList.remove('opacity-100', 'animate-pulse');
+                    greenLight.classList.add('opacity-30');
+                } else {
+                    greenLight.classList.remove('opacity-30');
+                    greenLight.classList.add('opacity-100', 'animate-pulse');
+                    redLight.classList.remove('opacity-100', 'animate-pulse');
+                    redLight.classList.add('opacity-30');
+                }
+            }
+
+            walkForward() {
+                this.sfx.playPop();
+                const avatar = document.getElementById('player-avatar');
+                avatar.classList.add('anim-walk');
+                setTimeout(() => avatar.classList.remove('anim-walk'), 400);
+
+                if (this.stageStatus === 'crosswalk_light' && this.signalColor === 'red' && this.playerPosition >= 45) {
+                    this.sfx.playError();
+                    this.updateMascotText("⚠️ 빨간불에 도로로 뛰어나가면 위험해! 멈춰 서서 기다려야 해!", "위험해요! 빨간불에는 건너면 안 돼요!");
+                    return;
+                }
+
+                if (this.stageStatus === 'car_hazard' && this.playerPosition >= 40) {
+                    this.sfx.playError();
+                    this.updateMascotText("🚗 차가 오는 중이야! 지금 나가면 위험해! [멈춰서 좌우 살피기]를 누르자!", "차가 오고 있어요! 멈춰서 기다리세요!");
+                    return;
+                }
+
+                this.playerPosition += 12;
+                if (this.playerPosition > 80) {
+                    this.playerPosition = 5;
+                    this.currentRoadStage++;
+                    this.setupStageEvent();
+                }
+
+                this.updatePlayerUI();
+                this.updateRoadProgress();
+            }
+
+            stopAndLook() {
+                this.sfx.playSuccess();
+                this.speech.speak("좌 우 살피기! 안전 확인 완료!");
+
+                const statusBox = document.getElementById('road-status-box');
+
+                if (this.stageStatus === 'caution_zone') {
+                    statusBox.innerHTML = "✨ 잘했어요! 어린이 보호구역에서는 항상 좌우를 살피며 걷는 습관이 중요해요! 계속 앞으로 걸어가 보세요.";
+                } else if (this.stageStatus === 'crosswalk_light' && this.signalColor === 'green') {
+                    statusBox.innerHTML = "✨ 좌우 차량 안전 확인 완료! 이제 ✋ <b>[손들고 건너기]</b>를 누르고 안전하게 지나가세요!";
+                } else if (this.stageStatus === 'car_hazard') {
+                    const car = document.getElementById('stage-car');
+                    car.classList.add('anim-car');
+                    statusBox.innerHTML = "🚗 부르릉~! 자동차가 무사히 쌩~ 지나갔어요! 이제 안심하고 앞으로 걸어가세요!";
+                    setTimeout(() => {
+                        this.stageStatus = 'car_passed';
+                    }, 1200);
+                } else {
+                    statusBox.innerHTML = "👀 왼쪽, 오른쪽을 꼼꼼하게 살펴보았어요! 훌륭해요!";
+                }
+
+                this.addStars(5);
+            }
+
+            raiseHandAndCross() {
+                this.sfx.playPop();
+                const handIcon = document.getElementById('player-hand-icon');
+                handIcon.classList.remove('opacity-0');
+                handIcon.classList.add('opacity-100', 'animate-bounce');
+
+                const statusBox = document.getElementById('road-status-box');
+
+                if (this.stageStatus === 'crosswalk_light' && this.signalColor === 'green') {
+                    this.sfx.playSuccess(2);
+                    statusBox.innerHTML = "🙋‍♀️ 손을 높이 들고 건너니 운전자 아저씨도 나를 잘 볼 수 있어요! 🏃‍♂️ 앞으로 걸어가서 길을 완벽히 건너세요!";
+                    this.speech.speak("손을 높이 들고 건너요! 멋져요!");
+                    this.addStars(15);
+                } else {
+                    statusBox.innerHTML = "✋ 손을 높이 들었어요! 늘 차보다 내가 먼저 잘 보이게 손을 들어주는 습관을 가져요!";
+                    this.speech.speak("손을 들었어요! 차를 살피며 앞으로 가요!");
+                }
+
+                setTimeout(() => {
+                    handIcon.classList.remove('animate-bounce');
+                }, 2000);
+            }
+
+            updatePlayerUI() {
+                const player = document.getElementById('stage-player');
+                if (player) {
+                    player.style.left = `${this.playerPosition}%`;
+                }
+            }
+
+            updateRoadProgress() {
+                const progressBar = document.getElementById('road-progress-bar');
+                if (progressBar) {
+                    const totalPercent = Math.min(100, Math.round(((this.currentRoadStage - 1) * 33) + (this.playerPosition * 0.33)));
+                    progressBar.style.width = `${totalPercent}%`;
+                }
+            }
+
+            /* --- Tab 3: Dynamic Quiz Arena --- */
+            setQuizMode(mode) {
+                this.sfx.playPop();
+                this.quizGameMode = mode;
+                document.getElementById('qmode-classic').className = mode === 'classic' ? "p-3 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow" : "p-3 rounded-2xl font-bold text-sm bg-slate-100 text-slate-700 shadow";
+                document.getElementById('qmode-ox').className = mode === 'ox' ? "p-3 rounded-2xl font-bold text-sm bg-purple-600 text-white shadow" : "p-3 rounded-2xl font-bold text-sm bg-slate-100 text-slate-700 shadow";
+                this.startQuizRound();
+            }
+
+            setupQuizQuestions() {
+                this.quizQuestions = [
+                    {
+                        type: 'sign_choice',
+                        icon: TRAFFIC_SIGNS[0].svg,
+                        title: "이 노란색 삼각형 표지판의 이름은 무엇일까요?",
+                        options: ["어린이 보호구역", "횡단보도", "자전거 길", "주정차 금지"],
+                        answer: "어린이 보호구역"
+                    },
+                    {
+                        type: 'sign_choice',
+                        icon: TRAFFIC_SIGNS[1].svg,
+                        title: "파란색 네모에 하얀색 줄무늬가 있는 이 표지판은?",
+                        options: ["주차장", "횡단보도", "어린이 보호구역", "우회전 금지"],
+                        answer: "횡단보도"
+                    },
+                    {
+                        type: 'ox',
+                        icon: "🚦",
+                        title: "신호등이 빨간불일 때는 멈춰서 기다려야 한다. (O / X)",
+                        options: ["O (맞아요)", "X (아니에요)"],
+                        answer: "O (맞아요)"
+                    },
+                    {
+                        type: 'sign_choice',
+                        icon: TRAFFIC_SIGNS[2].svg,
+                        title: "사람이 걸어가면 안 되는 곳을 알리는 금지 표지판은?",
+                        options: ["보행자 통행금지", "횡단보도", "신호등", "어린이 보호구역"],
+                        answer: "보행자 통행금지"
+                    },
+                    {
+                        type: 'ox',
+                        icon: "✋",
+                        title: "길을 건널 때는 손을 높이 들고 차를 보며 건너야 한다. (O / X)",
+                        options: ["O (맞아요)", "X (아니에요)"],
+                        answer: "O (맞아요)"
+                    }
+                ];
+            }
+
+            startQuizRound() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.quizIndex = 0;
+                this.quizScore = 0;
+                this.comboCount = 0;
+                this.loadNextQuizQuestion();
+            }
+
+            loadNextQuizQuestion() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                if (this.quizIndex >= this.quizQuestions.length) {
+                    this.renderQuizComplete();
+                    return;
+                }
+
+                const q = this.quizQuestions[this.quizIndex];
+                document.getElementById('quiz-progress-text').innerText = `문제 ${this.quizIndex + 1} / ${this.quizQuestions.length}`;
+                document.getElementById('quiz-streak-badge').innerText = `COMBO x${this.comboCount}`;
+                document.getElementById('quiz-question-title').innerText = q.title;
+
+                const iconBox = document.getElementById('quiz-question-icon');
+                if (q.type === 'ox') {
+                    iconBox.innerHTML = `<span class="text-5xl">${q.icon}</span>`;
+                } else {
+                    iconBox.innerHTML = q.icon;
+                }
+
+                const optionsContainer = document.getElementById('quiz-options-container');
+                optionsContainer.innerHTML = q.options.map(opt => `
+                    <button onclick="app.submitQuizAnswer('${opt.replace(/'/g, "\\'")}')" class="bg-purple-50 hover:bg-purple-100 text-purple-900 font-extrabold text-base sm:text-lg p-4 rounded-2xl border-2 border-purple-200 shadow transition-all active-press text-center">
+                        ${opt}
+                    </button>
+                `).join('');
+
+                document.getElementById('quiz-feedback-box').classList.add('hidden');
+                this.speech.speak(q.title);
+
+                // Start Timer
+                this.timeLeft = 15;
+                document.getElementById('quiz-time-left').innerText = this.timeLeft;
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    document.getElementById('quiz-time-left').innerText = this.timeLeft;
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.submitQuizAnswer(""); // timeout
+                    }
+                }, 1000);
+            }
+
+            submitQuizAnswer(selected) {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                const q = this.quizQuestions[this.quizIndex];
+                const feedbackBox = document.getElementById('quiz-feedback-box');
+                feedbackBox.classList.remove('hidden');
+
+                const isCorrect = (selected === q.answer);
+
+                if (isCorrect) {
+                    this.sfx.playSuccess(2);
+                    this.comboCount++;
+                    this.quizScore += 20;
+                    this.addStars(10);
+                    feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-lg bg-emerald-100 text-emerald-800 border-2 border-emerald-300";
+                    feedbackBox.innerHTML = `🎉 정답이에요! (+10 ⭐)`;
+                    this.speech.speak("참 잘했어요! 정답입니다!");
+
+                    if (this.comboCount >= 3) {
+                        this.unlockBadge('badge-quiz-master');
+                    }
+                } else {
+                    this.sfx.playError();
+                    this.comboCount = 0;
+                    feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-lg bg-rose-100 text-rose-800 border-2 border-rose-300";
+                    feedbackBox.innerHTML = `❌ 아쉽네요! 정답은 <b>[${q.answer}]</b> 입니다.`;
+                    this.speech.speak(`아쉽네요. 정답은 ${q.answer} 입니다.`);
+                }
+
+                this.quizIndex++;
+                setTimeout(() => {
+                    this.loadNextQuizQuestion();
+                }, 2000);
+            }
+
+            renderQuizComplete() {
+                const container = document.getElementById('sec-quiz');
+                container.innerHTML = `
+                    <div class="bg-white border-4 border-purple-200 rounded-3xl p-8 shadow-2xl max-w-xl mx-auto text-center space-y-6">
+                        <div class="text-6xl animate-bounce-slow">🏆</div>
+                        <h3 class="text-3xl font-black text-purple-900">퀴즈 게임 완료!</h3>
+                        <p class="text-slate-600 font-sans-body">모든 문제를 멋지게 풀었어요! 획득한 점수와 별을 확인하세요.</p>
+                        <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200 inline-block w-full">
+                            <div class="text-sm font-bold text-purple-700">최종 점수</div>
+                            <div class="text-4xl font-black text-purple-600 mt-1">${this.quizScore}점</div>
+                        </div>
+                        <button onclick="location.reload()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-4 rounded-2xl shadow-lg text-lg active-press">
+                            🔄 처음부터 다시 도전하기
+                        </button>
+                    </div>
+                `;
+                this.confetti.burst(80);
+            }
+
+            /* --- Tab 4: Badges --- */
+            unlockBadge(id) {
+                if (!this.unlockedBadges.has(id)) {
+                    this.unlockedBadges.add(id);
+                    this.sfx.playSuccess(2);
+                    this.confetti.burst(50);
+                    const b = BADGES_DATA.find(x => x.id === id);
+                    if (b) {
+                        this.updateMascotText(`🎉 축하해요! 새로운 훈장 <b>[${b.title}]</b>을 획득했어요!`, `축하합니다! 새로운 훈장을 획득했어요!`);
+                    }
+                    this.renderBadges();
+                }
+            }
+
+            renderBadges() {
+                const grid = document.getElementById('badges-grid');
+                if (!grid) return;
+
+                grid.innerHTML = BADGES_DATA.map(badge => {
+                    const isUnlocked = this.unlockedBadges.has(badge.id);
+                    return `
+                        <div class="rounded-3xl p-5 border-4 ${isUnlocked ? 'border-amber-400 bg-amber-50 shadow-xl' : 'border-slate-200 bg-slate-50 opacity-60'} flex flex-col items-center text-center space-y-3 relative">
+                            <span class="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full ${isUnlocked ? 'bg-amber-400 text-amber-950' : 'bg-slate-200 text-slate-500'}">
+                                ${isUnlocked ? '획득 완료 ✨' : '잠김 🔒'}
+                            </span>
+                            <div class="text-5xl bg-white w-20 h-20 rounded-2xl border-2 ${isUnlocked ? 'border-amber-300 shadow-md' : 'border-slate-200'} flex items-center justify-center mt-2">
+                                ${badge.icon}
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-black text-slate-900">${badge.title}</h3>
+                                <p class="text-xs font-sans-body text-slate-500 mt-1">${badge.desc}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Initialize App on Window Load
+        let app = null;
+        window.onload = function() {
+            app = new TrafficSafetyApp();
+        };
+    </script>
+</body>
+</html>
